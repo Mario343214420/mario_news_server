@@ -10,10 +10,10 @@ const usersSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	type: {
-		type: String,
-		required: true
-	},
+	// type: {
+	// 	type: String,
+	// 	required: true
+	// },
 	header: String,
 	post: String,
 	salary: String,

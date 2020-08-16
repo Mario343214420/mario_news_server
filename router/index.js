@@ -2,7 +2,7 @@ const express = require('express')
 const cookieParser = require('cookie-parser');
 const router = new express.Router()
 const md5 = require('blueimp-md5')
-// const Users = require('../model/users')
+const Users = require('../model/users')
 
 // 请求体转译
 router.use(express.urlencoded({extended: true}))
@@ -13,7 +13,8 @@ router.get('/',(req,res)=>{
 // 注册接口
 router.post('/register',async (req, res) => {
 	// console.log(req.body)
-	const {username, password, type} = (req.body)
+	// 请求体中可拓展属性 例：type
+	const {username, password} = (req.body)
 	try{
 		const user = await Users.findOne({username})
 		if(user){
@@ -22,13 +23,13 @@ router.post('/register',async (req, res) => {
 				msg: '用户已存在'
 			})
 		}else{
-			const user = await Users.create({username, password: md5(password)}, type)
+			// create中可加入type属性
+			const user = await Users.create({username, password: md5(password)})
 			res.json({
 				code: 0,
 				data:{
 					username: user.username,
-					_id: user.id,
-					type: user.type
+					_id: user.id
 				}
 			})
 		}
@@ -50,7 +51,7 @@ router.post('/login',async (req, res) => {
 				msg: '登录成功！',
 				data: {
 					_id: user.id,
-					type: user.type,
+					// type: user.type,
 					username: user.username,
 					post: user.post,
 					info: user.info
