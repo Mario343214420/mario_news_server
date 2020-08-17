@@ -14,6 +14,9 @@ const usersSchema = new mongoose.Schema({
 	// 	type: String,
 	// 	required: true
 	// },
+	tel: {
+		type: String
+	},
 	header: String,
 	post: String,
 	salary: String,
