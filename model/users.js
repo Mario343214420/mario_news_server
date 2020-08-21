@@ -10,13 +10,9 @@ const usersSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	// type: {
-	// 	type: String,
-	// 	required: true
-	// },
-	tel: {
-		type: String
-	},
+	type: String,
+	tel: String,
+	com: Array,
 	header: String,
 	post: String,
 	salary: String,

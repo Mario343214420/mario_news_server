@@ -14,15 +14,32 @@ router.get('/',(req,res)=>{
 })
 // 获取验证码
 router.post('/getCaptcha', async (req, res)=>{
+	let num = randomCode(6)
 	const {tel} = (req.body)
+	console.log(tel)
+	req.session.user = {tel,num}
 	let reg = new RegExp(/^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/)
 	try{
 		const user = await Users.findOne({tel})
 		if(user){
-			res.json({
-				code: 1,
-				msg: '用户已存在'
-			})
+			if(reg.test(tel)){
+				console.log(num)
+				// sendCode(tel + '',num , function (success) {
+				// 	console.log(success);
+				// })
+				res.json({
+					code: 200,
+					msg: '登录成功',
+					data: {
+						code: num
+					}
+				})
+			}else{
+				res.json({
+					code: 1,
+					msg: '手机号不合法'
+				})
+			}
 		}else{
 			if(reg.test(tel)){
 				let num = randomCode(6)
@@ -50,6 +67,58 @@ router.post('/getCaptcha', async (req, res)=>{
 			code:2, msg: '网络不稳，请刷新重试。'
 		})
 	}
+})
+
+// 手机号登录
+router.post('/telLogin',async (req,res) =>{
+	const {tel} = (req.body)
+	console.log(req.session)
+	console.log(req.session.user,'tel:' + tel)
+	try {
+		const user = await Users.findOne({tel})
+		if(req.session.user.tel === tel){
+			res.json({
+				code: 200,
+				msg: '登录成功',
+				data: {
+					user
+				}
+			})
+		}
+	}catch(e){
+		console.log(e)
+		res.json({
+			code:2, msg: '网络不稳，请刷新重试。'
+		})
+	}
+	/*try{
+		const user = await Users.findOne({tel})
+		if(user){
+			let num = randomCode(6)
+			// sendCode(tel + '',num , function (success) {
+			// 	console.log(success);
+			// })
+			console.log(num)
+			res.json({
+				code: 200,
+				msg: '请注册用户名',
+				data: {
+					code: num
+				}
+			})
+		}else{
+			res.json({
+				code: 200,
+				msg: '账号未注册！',
+				data: undefined
+			})
+		}
+	}catch(e){
+		console.log(e)
+		res.json({
+			code:2, msg: '网络不稳，请刷新重试。'
+		})
+	}*/
 })
 // 注册接口
 router.post('/register',async (req, res) => {
@@ -90,38 +159,6 @@ router.post('/register',async (req, res) => {
 		})
 	}
 })
-// 手机号登录
-router.post('/telLogin',async (res,req) =>{
-	const {tel} = (req.body)
-	try{
-		const user = await Users.findOne({tel})
-		if(user){
-			res.json({
-				code: 200,
-				msg: '登录成功！',
-				data: {
-					_id: user.id,
-					// type: user.type,
-					username: user.username,
-					post: user.post,
-					info: user.info,
-					tel: user.tel
-				}
-			})
-		}else{
-			res.json({
-				code: 200,
-				msg: '跳转注册！',
-				data: undefined
-			})
-		}
-	}catch(e){
-		console.log(e)
-		res.json({
-			code:2, msg: '网络不稳，请刷新重试。'
-		})
-	}
-})
 // 登录接口
 router.post('/login',async (req, res) => {
 	const {username, password} = (req.body)
@@ -133,9 +170,8 @@ router.post('/login',async (req, res) => {
 				msg: '登录成功！',
 				data: {
 					_id: user.id,
-					// type: user.type,
 					username: user.username,
-					post: user.post,
+					tel: user.tel,
 					info: user.info
 				}
 			})
