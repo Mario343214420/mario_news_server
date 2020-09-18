@@ -24,9 +24,9 @@ router.post('/getCaptcha', async (req, res)=>{
 		if(user){
 			if(reg.test(tel)){
 				console.log(num)
-				// sendCode(tel + '',num , function (success) {
-				// 	console.log(success);
-				// })
+				sendCode(tel + '',num , function (success) {
+					console.log(success);
+				})
 				res.json({
 					code: 200,
 					msg: '登录成功',
@@ -44,9 +44,9 @@ router.post('/getCaptcha', async (req, res)=>{
 			if(reg.test(tel)){
 				let num = randomCode(6)
 				console.log(num)
-				// sendCode(tel + '',num , function (success) {
-				// 	console.log(success);
-				// })
+				sendCode(tel + '',num , function (success) {
+					console.log(success);
+				})
 				res.json({
 					code: 200,
 					msg: '请注册用户名',
